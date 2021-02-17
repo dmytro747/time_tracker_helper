@@ -1,55 +1,73 @@
-import Head from 'next/head'
+import React, { useState } from 'react';
+import * as dateFns from "date-fns";
+import Head from 'next/head';
+
+import Calender from '../components/calendar';
+import FileUploader from '../components/file-uploader';
+
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+
+  const [report, setReport] = useState([]);
+
+
+  const buildCommitHistoryFromCSV = (CSV) => {
+ 
+    const lines = CSV.split(/\r\n|\n/);
+   
+    const result = lines.reduce((acc, line) => {
+      const entries = line.split('|');
+      acc.push({ ad: entries[0], s: entries[1], an: entries[2] });
+      return acc;
+    }, []);
+
+    setReport(result);
+  
+  };
+
+  const handleDateClick = (date) => {
+    console.log(date, report);
+
+    const result  = report.filter(line => dateFns.isSameDay(new Date(line.ad), date));
+
+    const workDone = result.reduce((acc, line) => {
+      acc += `${line.s.trim()}; `;
+      return acc;
+    }, '');
+
+    
+    navigator.clipboard.writeText(workDone)
+    .then(() => {
+      const dayReport = `Report for ${date.toLocaleDateString()} \n Total number of commits ${result.length} \n ${workDone}`
+
+      alert(dayReport);
+    })
+    .catch(e => {
+      alert(e)
+    })
+
+   
+  } 
+
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Time tracker helper app</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to time tracker helper app
         </h1>
-
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          Visualize your github commits history
         </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <FileUploader onFileLoaded={buildCommitHistoryFromCSV}/>
+        <Calender onDateClick={handleDateClick} />
       </main>
-
       <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
