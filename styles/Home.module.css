@@ -120,3 +120,31 @@
     flex-direction: column;
   }
 }
+
+
+.code {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.loader, .authors {
+  width: 100%;
+  padding: 10px;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+  Bitstream Vera Sans Mono, Courier New, monospace;
+  font-size: 1.1rem;
+}
+
+.authors select {
+  width: 120px;
+  margin-left: 10px;
+  height: 40px;
+}
+
+.filename {
+  color: rgba(26, 255, 44, 0.6);
+  font-size: 00.75rem;
+}

@@ -21,7 +21,7 @@ class FileUploader extends React.Component {
     var reader = new FileReader();
         reader.onload =  () => {
             const result = reader.result;
-            this.props.onFileLoaded(result);
+            this.props.onFileLoaded(result, e.target.value);
         };
       
         reader.readAsBinaryString(e.target.files[0]);
